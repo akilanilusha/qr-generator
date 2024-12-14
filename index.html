@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QR Code Generator</title>
+  <script src="qrcode.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: 50px auto;
+      padding: 20px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      color: #333;
+    }
+
+    form {
+      margin: 20px 0;
+    }
+
+    input[type="text"] {
+      width: 80%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #28a745;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #218838;
+    }
+
+    #qrcode {
+      margin: 20px auto;
+    }
+
+    a {
+      display: inline-block;
+      margin: 10px 0;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+    }
+
+    a:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>QR Code Generator</h1>
+    <form id="qrForm">
+      <input type="text" id="idInput" placeholder="Enter ID" required />
+      <input type="text" id="nameInput" placeholder="Enter Name" required />
+      <button type="submit">Generate QR Code</button>
+    </form>
+    <div id="qrcode"></div>
+    <a id="openLink" style="display: none" target="_blank">Open Link</a>
+    <a id="downloadLink" style="display: none">Download QR Code</a>
+  </div>
+
+  <script>
+    const form = document.getElementById("qrForm");
+    const idInput = document.getElementById("idInput");
+    const nameInput = document.getElementById("nameInput");
+    const qrCodeContainer = document.getElementById("qrcode");
+    const openLink = document.getElementById("openLink");
+    const downloadLink = document.getElementById("downloadLink");
+
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+
+      qrCodeContainer.innerHTML = "";
+      openLink.style.display = "none";
+      downloadLink.style.display = "none";
+
+      // Get user inputs
+      const id = idInput.value.trim();
+      const name = nameInput.value.trim();
+
+      if (id && name) {
+        const url = `https://mupos.muinvoice.com?id=${encodeURIComponent(
+          id
+        )}&name=${encodeURIComponent(name)}`;
+
+        const qrCode = new QRCode(qrCodeContainer, {
+          text: url,
+          width: 200,
+          height: 200,
+        });
+
+        openLink.href = url;
+        openLink.style.display = "inline-block";
+        openLink.textContent = "Open Link";
+
+        setTimeout(() => {
+          const canvas = qrCodeContainer.querySelector("canvas");
+          if (canvas) {
+            const qrCodeUrl = canvas.toDataURL("image/png");
+            downloadLink.href = qrCodeUrl;
+            downloadLink.download = "qrcode.png";
+            downloadLink.style.display = "inline-block";
+            downloadLink.textContent = "Download QR Code";
+          }
+        }, 100);
+      }
+    });
+  </script>
+</body>
+
+</html>
